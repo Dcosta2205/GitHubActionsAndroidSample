@@ -71,18 +71,24 @@ jobs:
           files: ${{ steps.releaseAab.outputs.aabfile }} ${{ steps.releaseApk.outputs.apkfile }}
           dest: ${{ steps.releaseApk.outputs.apkfile }}.zip
 
-#      - name: Sending release build to Slack
-#        uses: MeilCli/slack-upload-file@v3
-#        with:
-#          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
-#          file_path: ${{ steps.releaseApk.outputs.apkfile }}.zip
-#          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
-#          initial_comment: "Release build is now available."
+      - name: Sending release build to Slack
+        uses: MeilCli/slack-upload-file@v3
+        with:
+          slack_token: ${{ secrets.SLACK_BOT_TOKEN }}
+          file_path: ${{ steps.releaseApk.outputs.apkfile }}.zip
+          channel_id: ${{ secrets.SLACK_CHANNEL_ID }}
+          initial_comment: "Release build is now available."
 
-#      - name: upload apk to Firebase App Distribution
-#        uses: wzieba/Firebase-Distribution-Github-Action@v1
-#        with:
-#          appId: ${{secrets.FIREBASE_APP_ID_RELEASE}}
-#          serviceCredentialsFileContent: ${{ secrets.SERVICE_CREDENTIALS_FILE_RELEASE }}
-#          groups: ${{ github.event.inputs.testers }}
-#          file: ${{ steps.releaseApk.outputs.apkfile }}
+      - name: upload apk to Firebase App Distribution
+        uses: wzieba/Firebase-Distribution-Github-Action@v1
+        with:
+          appId: ${{secrets.FIREBASE_APP_ID_RELEASE}}
+          serviceCredentialsFileContent: ${{ secrets.SERVICE_CREDENTIALS_FILE_RELEASE }}
+          groups: ${{ github.event.inputs.testers }}
+          file: ${{ steps.releaseApk.outputs.apkfile }}
+
+      - name: Upload Release Build to Artifacts
+        uses: actions/upload-artifact@v3
+        with:
+           name: release-artifacts
+           path: ${{ steps.releaseApk.outputs.apkfile }}
